@@ -10,12 +10,18 @@ void handle_sigint(int sig) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
+    /* if (argc != 2) {
         fprintf(stderr, "Usage: %s [shm_id]\n", argv[0]);
         exit(EXIT_FAILURE);
-    }
+    } */
 
-    int shm_id = atoi(argv[1]);
+    pid_t procID = getpid();
+    pid_t pProcID = getppid();
+    printf("[DP-2] my PID is          - %ld\n", (long)procID);
+    printf("[DP-2] my Parent's PID is - %ld\n", (long)pProcID);
+    printf("[DP-2] The shmem id is %s\n", argv[1]);
+
+    /* int shm_id = atoi(argv[1]);
     attach_shared_mem(&shm, shm_id);
 
     // Fork DC process
@@ -49,7 +55,7 @@ int main(int argc, char *argv[]) {
 
         // Sleep for 1/20th of a second
         usleep(50000);
-    }
+    } */
 
     return 0;
 }

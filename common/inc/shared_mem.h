@@ -24,7 +24,7 @@ typedef struct {
 // Function Prototypes
 
 int init_shared_mem(int *shm_id);
-void attach_shared_mem(shared_mem_t **shm_ptr, int shm_id);
+int attach_shared_mem(shared_mem_t **shm_ptr, int shm_id);
 void detach_shared_mem(shared_mem_t *shm_ptr);
 
 
