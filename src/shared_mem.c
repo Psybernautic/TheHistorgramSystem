@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/shm.h>
-#include <errno.h>
-#include <string.h>
 #include "../inc/shared_mem.h"
 
 /* 

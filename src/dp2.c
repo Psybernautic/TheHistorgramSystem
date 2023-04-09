@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h>
-#include <signal.h>
-#include <semaphore.h>
-#include <string.h>
-#include <time.h>
 #include "../inc/shared_mem.h"
 
 sem_t *sem;
