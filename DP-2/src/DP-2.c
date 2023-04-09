@@ -21,7 +21,8 @@ int main(int argc, char *argv[]) {
     printf("[DP-2] my Parent's PID is - %ld\n", (long)pProcID);
     printf("[DP-2] The shmem id is %s\n", argv[1]);
 
-    /* int shm_id = atoi(argv[1]);
+    int shm_id = atoi(argv[1]);
+
     attach_shared_mem(&shm, shm_id);
 
     // Fork DC process
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
 
         // Sleep for 1/20th of a second
         usleep(50000);
-    } */
+    }
 
     return 0;
 }
