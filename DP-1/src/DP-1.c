@@ -5,6 +5,11 @@ int main(int argc, char *argv[]) {
     int shm_id = shmget(SHM_KEY, SHM_SIZE, IPC_CREAT | 0666);
     attach_shared_mem(&shm, shm_id);
 
+    char dp1_pid_str[10];
+    sprintf(dp1_pid_str, "%d", getpid());   //DP-1 PID
+
+    printf("DP-1 PID:%s\n",dp1_pid_str);
+
     // Initialize semaphore
     sem = sem_open("/sem", O_CREAT, 0666, 1);
     if (sem == SEM_FAILED) {
@@ -26,13 +31,14 @@ int main(int argc, char *argv[]) {
     else if (pid == 0) {
         // Child process (DP-2)
         char shm_id_str[10];
-        char dp1_pid_str[10];
+        char dp2_pid_str[10];
 
         sprintf(shm_id_str, "%d", shm_id);      // Shared Memory ID
-        sprintf(dp1_pid_str, "%d", getpid());   //DP-1 PID
+        sprintf(dp2_pid_str, "%d", getpid());   //DP-1 PID
+        printf("DP2 PID:%s\n",dp2_pid_str);
 
         execl("./DP-2", "DP-2", shm_id_str, dp1_pid_str, NULL);
-        
+
         fprintf(stderr, "Failed to launch DP-2 process: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }

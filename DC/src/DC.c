@@ -57,6 +57,9 @@ int main(int argc, char *argv[]) {
     dp1_pid = atoi(argv[2]);
     dp2_pid = atoi(argv[3]);
 
+    printf("dp1-id:%s\n", argv[2]);
+    printf("dp2-id:%s\n", argv[3]);
+
     shared_mem_t *shm_ptr = (shared_mem_t *)shmat(sharedMemoryID, NULL, 0);
     semaphoreID = semget(SHM_KEY, 1, 0666);
 
@@ -64,7 +67,8 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         usleep(2000000);
-
+        printf("dp1-id:%s\n", argv[2]);
+        printf("dp2-id:%s\n", argv[3]);
         struct sembuf sem_op = {0, -1, 0};
         semop(semaphoreID, &sem_op, 1);
 
