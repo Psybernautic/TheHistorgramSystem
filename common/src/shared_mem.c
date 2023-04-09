@@ -1,4 +1,3 @@
-#include <sys/shm.h>
 #include "../inc/shared_mem.h"
 
 #define COMMON_KEY 16535
@@ -66,4 +65,10 @@ void detach_shared_mem(shared_mem_t *shm_ptr)
         fprintf(stderr, "Failed to detach from shared memory: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
+}
+
+void handle_sigint_dp(int sig) {
+    detach_shared_mem(shm);
+    sem_close(sem);
+    exit(EXIT_SUCCESS);
 }

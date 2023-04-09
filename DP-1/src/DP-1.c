@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     and creation of the shared memory key */
     if (init_shared_mem(&shm_id) == EXIT_FAILURE)
     {
-        //perror(stderr);
+        perror("init_shared_mem");
         return EXIT_FAILURE;
     }
     printf("[DP-1] Memory id %d will be used\n", shm_id);
@@ -32,8 +32,15 @@ int main(int argc, char *argv[])
     will attach to it */
     if (attach_shared_mem(&shm, shm_id) == EXIT_FAILURE)
     {
-        //perror(stderr);
+        perror("attach_shared_mem");
         return EXIT_FAILURE;
+    }
+
+    // Initialize semaphore
+    sem = sem_open("/sem", O_CREAT, 0666, 1);
+    if (sem == SEM_FAILED) {
+        fprintf(stderr, "Failed to create semaphore: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
     }
     printf("[DP-1] Attached memory successfully\n");
 
@@ -85,7 +92,7 @@ int main(int argc, char *argv[])
         exit (EXIT_SUCCESS);
 
 
-        /* // Register signal handler for SIGINT
+        // Register signal handler for SIGINT
         signal(SIGINT, handle_sigint);
 
         // Main loop
@@ -109,7 +116,7 @@ int main(int argc, char *argv[])
 
             // Sleep for 2 seconds
             sleep(2);
-        } */
+        }
     }
     
 
