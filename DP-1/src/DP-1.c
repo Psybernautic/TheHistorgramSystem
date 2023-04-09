@@ -15,10 +15,6 @@ int main(int argc, char *argv[])
 {
     int shm_id = 0;
     
-    int pipe_fds[2];
-    pipe(pipe_fds);
-    char buf[1];
-    
     /* When DP-1 is launched, it will allocate enough shared memory to
     hold a circular buffer of 256 characters, plus enough space for the
     2 indices (i.e. the read index and the write index) */
@@ -69,7 +65,6 @@ int main(int argc, char *argv[])
         printf ("[DP-1] child my Parent's PID is - %ld\n", (long)pProcID);
 
         printf("[DP-1] child I am in the child!!\n");
-        read (pipe_fds[0], buf, 1);
         // Child process (DP-2)
         if(execl("../../DP-2/bin/DP-2", "DP-2", theArg, NULL) == -1)
         {
@@ -83,8 +78,6 @@ int main(int argc, char *argv[])
 
         printf ("[DP-1] parent my PID is          - %ld\n", (long)procID);
         printf ("[DP-1] parent my Parent's PID is - %ld\n", (long)pProcID);
-
-        write(pipe_fds[1], "_", 1);
 
         sleep(30);
 
