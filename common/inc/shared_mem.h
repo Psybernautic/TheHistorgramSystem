@@ -6,12 +6,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
 #include <semaphore.h>
 #include <time.h>
 #include <errno.h>
 #include <string.h>
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 258
+#define SHM_SIZE 256
+#define SHM_KEY 12345
+#define NUM_LETTERS 20
 
 // Shared structure amongst the Data Producers
 
@@ -21,11 +27,17 @@ typedef struct {
     int read_index;
 } shared_mem_t;
 
+// global variables
+
+sem_t *sem;
+shared_mem_t *shm;
+
 // Function Prototypes
 
 int init_shared_mem(int *shm_id);
 void attach_shared_mem(shared_mem_t **shm_ptr, int shm_id);
 void detach_shared_mem(shared_mem_t *shm_ptr);
+void handle_sigint_dp(int sig);
 
 
 

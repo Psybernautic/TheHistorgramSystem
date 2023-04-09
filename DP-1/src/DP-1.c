@@ -1,21 +1,8 @@
 #include "../../common/inc/shared_mem.h"
 
-sem_t *sem;
-shared_mem_t *shm;
-
-void handle_sigint(int sig) {
-    detach_shared_mem(shm);
-    sem_close(sem);
-    exit(EXIT_SUCCESS);
-}
-
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s [shm_id]\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
 
-    int shm_id = atoi(argv[1]);
+    int shm_id = shmget(SHM_KEY, SHM_SIZE, IPC_CREAT | 0666);
     attach_shared_mem(&shm, shm_id);
 
     // Initialize semaphore
@@ -38,13 +25,20 @@ int main(int argc, char *argv[]) {
     }
     else if (pid == 0) {
         // Child process (DP-2)
-        execl("./dp2", "dp2", argv[1], NULL);
+        char shm_id_str[10];
+        char dp1_pid_str[10];
+
+        sprintf(shm_id_str, "%d", shm_id);      // Shared Memory ID
+        sprintf(dp1_pid_str, "%d", getpid());   //DP-1 PID
+
+        execl("./DP-2", "DP-2", shm_id_str, dp1_pid_str, NULL);
+        
         fprintf(stderr, "Failed to launch DP-2 process: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     // Register signal handler for SIGINT
-    signal(SIGINT, handle_sigint);
+    signal(SIGINT, handle_sigint_dp);
 
     // Main loop
     while (1) {
