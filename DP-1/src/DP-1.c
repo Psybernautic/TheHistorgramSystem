@@ -1,4 +1,4 @@
-#include "../inc/shared_mem.h"
+#include "../../common/inc/shared_mem.h"
 
 sem_t *sem;
 shared_mem_t *shm;

@@ -1,0 +1,6 @@
+
+*.o
+DP-2/bin/
+DP-1/bin/
+DC/bin
+*.json
