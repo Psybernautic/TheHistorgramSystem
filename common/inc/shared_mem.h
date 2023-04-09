@@ -29,4 +29,4 @@ void detach_shared_mem(shared_mem_t *shm_ptr);
 
 
 
-#endif 
+#endif /*_SHARED_MEM_H*/
