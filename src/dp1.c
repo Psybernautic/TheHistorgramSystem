@@ -4,6 +4,8 @@
 #include <signal.h>
 #include <semaphore.h>
 #include <time.h>
+#include <errno.h>
+#include <string.h>
 #include "../inc/shared_mem.h"
 
 sem_t *sem;
@@ -50,7 +52,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Register signal handler for SIGINT
-    signal(SIGINT, handle_sigint)
+    signal(SIGINT, handle_sigint);
 
     // Main loop
     while (1) {

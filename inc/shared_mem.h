@@ -1,6 +1,6 @@
 #ifndef _SHARED_MEM_H_
 #define _SHARED_MEM_H_
-
+#include <fcntl.h>
 #define BUFFER_SIZE 256
 
 // Shared structure amongst the Data Producers
@@ -19,4 +19,4 @@ void detach_shared_mem(shared_mem_t *shm_ptr);
 
 
 
-#endif _SHARED_MEM_H
+#endif 

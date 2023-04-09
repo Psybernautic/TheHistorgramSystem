@@ -14,7 +14,7 @@ DP1_BIN = $(BIN_DIR)/dp1
 DP2_BIN = $(BIN_DIR)/dp2
 DC_BIN = $(BIN_DIR)/dc
 
-all: $(DP1_BIN) $(DP2_BIN) $(DC_BIN)
+all: $(DP1_BIN) $(DP2_BIN) 
 
 $(DP1_BIN): $(OBJ_DIR)/dp1.o $(OBJ_DIR)/shared_mem.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
