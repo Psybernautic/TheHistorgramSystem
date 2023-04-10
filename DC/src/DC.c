@@ -13,9 +13,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    sharedMemoryID = atoi(argv[1]);     // Shared Memory ID
+    sharedMemoryID = atoi(argv[3]);     // Shared Memory ID
     dp1_pid = atoi(argv[2]);            // DP-1 PID
-    dp2_pid = atoi(argv[3]);            // DP-2 PID
+    dp2_pid = atoi(argv[1]);            // DP-2 PID
 
     // Attach to the shared memory segment
     shared_mem_t *shm_ptr = (shared_mem_t *)shmat(sharedMemoryID, NULL, 0);
@@ -126,11 +126,11 @@ void handle_sigint(int sig) {
     exit(0);
 }
 
-int main(int argc, char *argv[]) {
-    /* if (argc != 4) {
+/* int main(int argc, char *argv[]) {
+    if (argc != 4) {
         printf("Usage: %s <sharedMemoryID> <DP1_PID> <DP2_PID>\n", argv[0]);
         return 1;
-    } */
+    }
 
     printf("[DC] I am DC!!\n");
 
@@ -169,4 +169,4 @@ int main(int argc, char *argv[]) {
     }
 
     return 0;
-}
+} */
