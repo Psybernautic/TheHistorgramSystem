@@ -125,3 +125,48 @@ void handle_sigint(int sig) {
 
     exit(0);
 }
+
+int main(int argc, char *argv[]) {
+    /* if (argc != 4) {
+        printf("Usage: %s <sharedMemoryID> <DP1_PID> <DP2_PID>\n", argv[0]);
+        return 1;
+    } */
+
+    printf("[DC] I am DC!!\n");
+
+    dp1_pid = atoi(argv[1]);
+    dp2_pid = atoi(argv[2]);
+    sharedMemoryID = atoi(argv[3]);
+
+    shared_mem_t *shm_ptr = (shared_mem_t *)shmat(sharedMemoryID, NULL, 0);
+    semaphoreID = semget(SHM_KEY, 1, 0666);
+
+    signal(SIGINT, handle_sigint);
+
+    while (1) {
+        usleep(2000000);
+
+        struct sembuf sem_op = {0, -1, 0};
+        semop(semaphoreID, &sem_op, 1);
+
+        while (shm_ptr->read_index != shm_ptr->write_index) {
+            char letter = shm_ptr->buffer[shm_ptr->read_index];
+            letter_counts[letter - 'A']++;
+
+            shm_ptr->read_index = (shm_ptr->read_index + 1) % BUFFER_SIZE;
+        }
+
+        sem_op.sem_op = 1;
+        semop(semaphoreID, &sem_op, 1);
+
+        static int counter = 0;
+        counter++;
+
+        if (counter >= 5) {
+            counter = 0;
+            update_histogram();
+        }
+    }
+
+    return 0;
+}

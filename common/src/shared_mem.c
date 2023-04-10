@@ -1,5 +1,10 @@
 #include "../inc/shared_mem.h"
 
+#define COMMON_KEY 16535
+
+sem_t *sem = NULL;
+//shared_mem_t *shm = NULL;
+
 /* 
  *  FUNCTION    : int init_shared_mem(int *shm_id)
  *  DESCRIPTION :
@@ -10,13 +15,35 @@
  *  RETURNS     : 0 if the shared memory segment is successfully created.
  *               -1 if the shared memory segment creation fails.
  */
-int init_shared_mem(int *shm_id) {
-    *shm_id = shmget(IPC_PRIVATE, sizeof(shared_mem_t), IPC_CREAT | 0666);
-    if (*shm_id < 0) {
-        fprintf(stderr, "Failed to create shared memory: %s\n", strerror(errno));
-        return -1;
+int init_shared_mem(int *shm_id)
+{
+    /* DP-1 will follow best practices and check for the
+    existence of the shared memory, and if not found, will
+    create it. In this respect then, DP-1 is alone
+    responsible for the generation and creation of the shared
+    memory key */
+
+    /* Getting the unique key for the shared memory */
+	key_t theKey = ftok(".", COMMON_KEY);
+	if (theKey == -1)
+	{
+        fprintf(stderr, "Failed to create key: %s\n", strerror(errno));
+		return EXIT_FAILURE;
+	}
+
+    /* checking if the shared memory exists */
+	*shm_id = shmget(theKey, sizeof(shared_mem_t), 0);
+    if (*shm_id == -1)
+    {
+        /* Creating the shared memory segment */
+		if ((*shm_id = shmget(theKey, sizeof(shared_mem_t), IPC_CREAT | 0666)) == -1)
+		{
+            fprintf(stderr, "Failed to create memory: %s\n", strerror(errno));
+			return EXIT_FAILURE;
+		}
+		return EXIT_SUCCESS; // Created new shared memory
     }
-    return 0;
+    return EXIT_SUCCESS; // Using existing shared memory
 }
 
 /* 
@@ -28,11 +55,14 @@ int init_shared_mem(int *shm_id) {
  *                int shm_id: the ID of the shared memory segment to attach to.
  *  RETURNS     : None
  */
-void attach_shared_mem(shared_mem_t **shm_ptr, int shm_id) {
-    *shm_ptr = shmat(shm_id, NULL, 0);
-    if (*shm_ptr == (void *) -1) {
+int attach_shared_mem(shared_mem_t **shm_ptr, int shm_id)
+{
+    /* Attaching the memory to our data space */
+    *shm_ptr = (shared_mem_t *)shmat(shm_id, NULL, 0);
+    if (*shm_ptr == (shared_mem_t *)-1)
+    {
         fprintf(stderr, "Failed to attach to shared memory: %s\n", strerror(errno));
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 }
 
@@ -44,23 +74,11 @@ void attach_shared_mem(shared_mem_t **shm_ptr, int shm_id) {
  *  PARAMETERS  : sshared_mem_t *shm_ptr: a pointer to the shared memory segment to detach from.           
  *  RETURNS     : None
  */
-void detach_shared_mem(shared_mem_t *shm_ptr) {
-    if (shmdt(shm_ptr) < 0) {
+void detach_shared_mem(shared_mem_t *shm_ptr)
+{
+    if (shmdt(shm_ptr) == -1)
+    {
         fprintf(stderr, "Failed to detach from shared memory: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-}
-
-/* 
- *  FUNCTION    : handle_sigint_dp(int sig)
- *  DESCRIPTION :
- *  This function is the signal handler for the SIGINT signal in the DP process.
- *  The function detaches the shared memory segment and closes the semaphore before terminating the process with a success exit code.
- *  PARAMETERS  : int sig: the signal that triggered the signal handler.        
- *  RETURNS     : None
- */
-void handle_sigint_dp(int sig) {
-    detach_shared_mem(shm);
-    sem_close(sem);
-    exit(EXIT_SUCCESS);
 }
