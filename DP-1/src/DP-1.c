@@ -1,4 +1,11 @@
-
+/*
+FILE                : DP-1.c
+PROJECT             : Histogram
+PROGRAMMER          : Sebastian Posada, Angel Aviles
+FIRST VERSION       : 2023-04-09
+DESCRIPTION         : This file contains the main function from the Data
+                    priducer 1 which is part of the histogram system
+*/
 
 #include "../../common/inc/shared_mem.h"
 
@@ -27,7 +34,6 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
-    printf("[DP-1] Memory id %d will be used\n", shm_id);
     
     /* After the shared memory has been created, DP-1
     will attach to it */
@@ -45,14 +51,12 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to create semaphore: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-    printf("[DP-1] Attached memory successfully\n");
 
     /* this would be a good time to also
     initialize the shared memory elements ... */
     shm->write_index = 0;
     shm->read_index = 0;
     memset(shm->buffer, '\0', BUFFER_SIZE);
-    printf("[DP-1] Initialized element in shared memory\n");
 
     /* DP-1 will launch DP-2 (through the use of a fork() call)
     in the launching of DP-2, only the sharedMemoryID (shmID) will

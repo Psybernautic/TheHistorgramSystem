@@ -1,3 +1,12 @@
+/*
+FILE                : DP2.c
+PROJECT             : Histogram
+PROGRAMMER          : Sebastian Posada, Angel Aviles
+FIRST VERSION       : 2023-04-09
+DESCRIPTION         : This file contains the main function from the Data
+                    priducer 2 which is part of the histogram system
+*/
+
 #include "../../common/inc/shared_mem.h"
 
 shared_mem_t *shm = NULL;
@@ -19,9 +28,6 @@ int main(int argc, char *argv[])
 
     pid_t procID = getpid();    /* Need to get the processID (PID) of itself */
     pid_t pProcID = getppid();  /* and the processID (PID) of DP-1 (it’s parent) */
-    printf("[DP-2] my PID is          - %ld\n", (long)procID);
-    printf("[DP-2] my Parent's PID is - %ld\n", (long)pProcID);
-    printf("[DP-2] The shmem id is %s\n", argv[1]);
     
     /* At this point, DP-2 will launch the DC application (through the
     use of a fork() call) and pass it’s PID, it’s parent’s (DP-1) PID

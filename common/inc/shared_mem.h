@@ -1,3 +1,13 @@
+/*
+FILE                : shared_mem.h
+PROJECT             : Histogram
+PROGRAMMER          : Sebastian Posada, Angel Aviles
+FIRST VERSION       : 2023-04-09
+DESCRIPTION         : This file contains the prototypes from the functions
+                    that will manage the shared memory initialization, attachment
+                    and deattachment.
+*/
+
 #ifndef _SHARED_MEM_H_
 #define _SHARED_MEM_H_
 
