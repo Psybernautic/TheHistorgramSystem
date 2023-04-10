@@ -1,7 +1,5 @@
 #include "../../common/inc/shared_mem.h"
 
-
-
 int letter_counts[NUM_LETTERS] = {0};
 int sharedMemoryID, semaphoreID, dp1_pid, dp2_pid;
 
@@ -48,14 +46,16 @@ void handle_sigint(int sig) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 4) {
+    /* if (argc != 4) {
         printf("Usage: %s <sharedMemoryID> <DP1_PID> <DP2_PID>\n", argv[0]);
         return 1;
-    }
+    } */
 
-    sharedMemoryID = atoi(argv[1]);
-    dp1_pid = atoi(argv[2]);
-    dp2_pid = atoi(argv[3]);
+    printf("[DC] I am DC!!\n");
+
+    dp1_pid = atoi(argv[1]);
+    dp2_pid = atoi(argv[2]);
+    sharedMemoryID = atoi(argv[3]);
 
     shared_mem_t *shm_ptr = (shared_mem_t *)shmat(sharedMemoryID, NULL, 0);
     semaphoreID = semget(SHM_KEY, 1, 0666);

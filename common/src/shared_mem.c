@@ -2,6 +2,9 @@
 
 #define COMMON_KEY 16535
 
+sem_t *sem = NULL;
+//shared_mem_t *shm = NULL;
+
 /* 
  * Initializes a new shared memory segment with the size of shared_mem_t and 
  * sets the ID of the segment in the pointer passed as argument.
@@ -65,10 +68,4 @@ void detach_shared_mem(shared_mem_t *shm_ptr)
         fprintf(stderr, "Failed to detach from shared memory: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
-}
-
-void handle_sigint_dp(int sig) {
-    detach_shared_mem(shm);
-    sem_close(sem);
-    exit(EXIT_SUCCESS);
 }

@@ -1,13 +1,12 @@
 #include "../../common/inc/shared_mem.h"
 
-sem_t *sem = NULL;
+//sem_t *sem = NULL;
 shared_mem_t *shm = NULL;
-
 
 void handle_sigint(int sig)
 {
     detach_shared_mem(shm);
-    // sem_close(sem);
+    sem_close(sem);
     exit(EXIT_SUCCESS);
 }
 
@@ -23,7 +22,6 @@ int main(int argc, char *argv[])
     and creation of the shared memory key */
     if (init_shared_mem(&shm_id) == EXIT_FAILURE)
     {
-        perror("init_shared_mem");
         return EXIT_FAILURE;
     }
     printf("[DP-1] Memory id %d will be used\n", shm_id);
@@ -32,7 +30,6 @@ int main(int argc, char *argv[])
     will attach to it */
     if (attach_shared_mem(&shm, shm_id) == EXIT_FAILURE)
     {
-        perror("attach_shared_mem");
         return EXIT_FAILURE;
     }
 
@@ -65,13 +62,8 @@ int main(int argc, char *argv[])
         pid_t procID = getpid();
         pid_t pProcID = getppid();
 
-        char theArg[25] = "";
+        char theArg[SMALL_BUFFER] = "";
         sprintf(theArg,"%d", shm_id);
-
-        printf ("[DP-1] child my PID is          - %ld\n", (long)procID);
-        printf ("[DP-1] child my Parent's PID is - %ld\n", (long)pProcID);
-
-        printf("[DP-1] child I am in the child!!\n");
         // Child process (DP-2)
         if(execl("../../DP-2/bin/DP-2", "DP-2", theArg, NULL) == -1)
         {
@@ -80,21 +72,12 @@ int main(int argc, char *argv[])
     }
     else
     {
-        pid_t procID = getpid();
-        pid_t pProcID = getppid();
-
-        printf ("[DP-1] parent my PID is          - %ld\n", (long)procID);
-        printf ("[DP-1] parent my Parent's PID is - %ld\n", (long)pProcID);
-
-        sleep(30);
-
-        printf("[DP-1] I'm done my \"work\" - I'm leaving ...\n");
-        exit (EXIT_SUCCESS);
-
-
         // Register signal handler for SIGINT
         signal(SIGINT, handle_sigint);
 
+        /* After their initial setup (detailed above) – both the DP-1 and DP-2
+        process enter their main loop. Both processes begin to generate their
+        random letters and write the information into the circular buffer */
         // Main loop
         while (1) {
             // Generate 20 random letters
@@ -105,14 +88,14 @@ int main(int argc, char *argv[])
             }
 
             // Write letters to shared memory
-            //sem_wait(sem);
+            sem_wait(sem);
             int space_available = BUFFER_SIZE - shm->write_index + shm->read_index;
             int num_to_write = space_available >= 20 ? 20 : space_available;
             for (int i = 0; i < num_to_write; i++) {
                 shm->buffer[shm->write_index] = letters[i];
                 shm->write_index = (shm->write_index + 1) % BUFFER_SIZE;
             }
-            //sem_post(sem);
+            sem_post(sem);
 
             // Sleep for 2 seconds
             sleep(2);

@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <string.h>
 
+#define SMALL_BUFFER 15
 #define BUFFER_SIZE 258
 #define SHM_SIZE 256
 #define SHM_KEY 12345
@@ -29,8 +30,8 @@ typedef struct {
 
 // global variables
 
-sem_t *sem;
-shared_mem_t *shm;
+extern sem_t *sem;
+//extern shared_mem_t *shm;
 
 // Function Prototypes
 
