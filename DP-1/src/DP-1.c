@@ -8,8 +8,6 @@ int main(int argc, char *argv[]) {
     char dp1_pid_str[10];
     sprintf(dp1_pid_str, "%d", getpid());   //DP-1 PID
 
-    printf("DP-1 PID:%s\n",dp1_pid_str);
-
     // Initialize semaphore
     sem = sem_open("/sem", O_CREAT, 0666, 1);
     if (sem == SEM_FAILED) {
@@ -29,15 +27,14 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     else if (pid == 0) {
+
         // Child process (DP-2)
+
+        // Shared Memory ID
         char shm_id_str[10];
-        char dp2_pid_str[10];
-
-        sprintf(shm_id_str, "%d", shm_id);      // Shared Memory ID
-        sprintf(dp2_pid_str, "%d", getpid());   //DP-1 PID
-        printf("DP2 PID:%s\n",dp2_pid_str);
-
-        execl("./DP-2", "DP-2", shm_id_str, dp1_pid_str, NULL);
+        sprintf(shm_id_str, "%d", shm_id);      
+  
+        execl("../../DP-2/bin/DP-2", "DP-2", shm_id_str, NULL);
 
         fprintf(stderr, "Failed to launch DP-2 process: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
@@ -57,12 +54,18 @@ int main(int argc, char *argv[]) {
 
         // Write letters to shared memory
         sem_wait(sem);
-        int space_available = BUFFER_SIZE - shm->write_index + shm->read_index;
-        int num_to_write = space_available >= 20 ? 20 : space_available;
+
+        // Buffer size - 2 indexes for writing and reading
+        int space_available = BUFFER_SIZE - shm->write_index + shm->read_index; 
+
+        // If there is enough space in the buffer, write 20 characters, otherwise write as many as there is space for
+        int num_to_write = space_available >= 20 ? 20 : space_available;  
         for (int i = 0; i < num_to_write; i++) {
             shm->buffer[shm->write_index] = letters[i];
             shm->write_index = (shm->write_index + 1) % BUFFER_SIZE;
         }
+
+        // increment the value of the semaphore
         sem_post(sem);
 
         // Sleep for 2 seconds
