@@ -64,6 +64,15 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+/* 
+ *  FUNCTION    : update_histogram()
+ *  DESCRIPTION :
+ *  This function updates and prints the histogram of letter counts in the console.
+ *  The function first clears the console using the "clear" command, then loops through the letter counts array and prints each letter 
+ *  with its corresponding count and histogram.
+ *  PARAMETERS  : None      
+ *  RETURNS     : None
+ */
 void update_histogram() {
     system("clear");
 
@@ -85,6 +94,16 @@ void update_histogram() {
     }
 }
 
+/* 
+ *  FUNCTION    : handle_sigint(int sig)
+ *  DESCRIPTION :
+ *  This function is the signal handler for the SIGINT signal in the main process.
+ *  The function sends the SIGINT signal to both DP processes to terminate them and waits for them to finish writing to the shared memory segment before updating and printing the histogram of letter counts.
+ *  The function then detaches from the shared memory segment, removes it using shmctl(), and removes the semaphore using semctl().
+ *  Finally, the function prints a message to the console and terminates the process with a success exit code.
+ *  PARAMETERS  : int sig: the signal that triggered the signal handler.  
+ *  RETURNS     : None
+ */
 void handle_sigint(int sig) {
 
     kill(dp1_pid, SIGINT);
